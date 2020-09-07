@@ -10,6 +10,7 @@ button {
     background-color: #F7F7F7;
     border: 2px solid transparent;
     font-size:  15px;
+    text-overflow: ellipsis;
 }
 
 button:hover {
@@ -21,18 +22,18 @@ button:focus {
     border: 2px solid #DDDDDE;
 }
 
+p:empty {
+    display: block;
+}
+
 .calculator {
     margin-top: 5vh;
     width: 33vw;
 }
 
 .text-display-area {
-    border-bottom: 2px solid #DDDDDE;
     text-align: right;
     font-family: 'digital-7', sans-serif;
-    font-size: 40px;
-    margin-bottom: 10px;
-    padding: 2px;
 }
 
 .btn-row{
@@ -42,18 +43,17 @@ button:focus {
 }
 
 .number {
-    /* background-color: #D9E8EC; */
     background-color: #d6f0cd;
 }
 
 .operator {
     width: 25%;
     font-weight: bold;
-    
 }
 
 .number, #clear, #backspace {
     width: 25%;
+    text-overflow: ellipsis;
 }
 
 #equals {
@@ -61,6 +61,15 @@ button:focus {
 }
 
 #display {
+    border-bottom: 2px solid #DDDDDE;
+    font-size: 40px;
+    margin: 0px 0px 10px;
+    padding: 2px;
+}
+
+#displayAbove {
+    height: 16px;
+    color: #DDDDDE;
     margin: 0px;
 }
 

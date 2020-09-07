@@ -9,6 +9,7 @@
 <body>
     <div class="calculator">
         <div class="text-display-area">
+            <p id="displayAbove"></p>
             <p id="display">do math!</p>
         </div>
         <div class="btn-row">
@@ -40,13 +41,15 @@
             <button id="clear">clear</button>
         </div>
     </div>
+    
+
 
 
 </body>
 <script>
     const display = document.querySelector("#display");
+    const displayAbove = document.querySelector("#displayAbove");
 
-    let operator;
     let displayValue = 0;
     let totalValue = null;
     let holdingArray = [];
@@ -55,68 +58,30 @@
     const operaBtn = document.querySelectorAll(".operator");
     operaBtn.forEach(function(elem){
         elem.addEventListener("click", function(){
-            operator = elem.textContent.toLowerCase().trim();
-            console.log("operatBtn total value = " + totalValue);
-            if(holdingArray.length !== 0){
-                operate(holdingArray,holding2,displayValue);
-
-                displayValue = 0;
-                holdingArray = [];
-                holding2 = null;
-            } 
-            
-            if(totalValue !== null){
-                holdingArray.push(Number(totalValue));
-                holdingArray.push(operator);
-                console.log(operator);
-                totalValue = null;
-            } else {
-                holdingArray.push(Number(displayValue));
-                holdingArray.push(operator);
-                console.log(operator);
-            } 
-            operator = null;
-            displayValue = null;
+            setOperator(elem.textContent.toLowerCase().trim());
         });
     });
 
     const numBtn = document.querySelectorAll(".number");
     numBtn.forEach(function(elem){
         elem.addEventListener("click", function(){
-            totalValue = null;
-            
-            if(displayValue === 0 || displayValue === null){
-                displayValue = elem.textContent.toLowerCase().trim();
-                console.log(displayValue);
-            } else {
-                displayValue += elem.textContent.toLowerCase().trim();
-                console.log(displayValue);
-            }
-            display.textContent = displayValue;
-            console.log(displayValue.length)
+            displayNumber(elem.textContent);
         });
     });
+
+    document.addEventListener('keydown',logKey);
 
     const equalBtn = document.querySelectorAll("#equals");
     equalBtn.forEach(function(elem){
         elem.addEventListener("click", function(){
-            operate(holdingArray,holding2, displayValue);
-            
-            displayValue = 0;
-            holdingArray = [];
-            holding2 = null;
+            operate();
         })
     });
 
     const backspaceBtn = document.querySelectorAll("#backspace");
     backspaceBtn.forEach(function(elem){
         elem.addEventListener("click", function(){
-            if(displayValue.length > 1){
-                displayValue = displayValue.slice(0,-1);
-            } else {
-                displayValue = 0;
-            }
-            display.textContent = displayValue;
+            backSpace();
         })
     })
 
@@ -153,10 +118,12 @@
         operator = null;
         totalValue = null;
         display.textContent = "do math!";
+        displayAbove.textContent = "";
     }
 
-    function operate(holdingArray,holding2,displayValue){
+    function operate(){
         holding2 = Number(displayValue);
+        updateDisplayAbove(holding2);
         
         if(isNaN(holdingArray[0]) && isNaN(holding2)){
             displayValue = 0;
@@ -182,8 +149,68 @@
         } else {
             display.textContent = displayValue.toFixed(2);
         }
-        
+
         totalValue = displayValue;
+        displayValue = 0;
+        holdingArray = [];
+        holding2 = null;
+    }
+
+    function displayNumber(e){
+        totalValue = null;
+            
+        if(displayValue === 0 || displayValue === null){
+            displayValue = e;
+        } else {
+            displayValue += e;
+        }
+        display.textContent = displayValue;
+    }
+
+    function setOperator(o){
+        if(holdingArray.length !== 0){
+            operate();
+        } 
+        
+        if(totalValue !== null){
+            holdingArray.push(Number(totalValue));
+            holdingArray.push(o);
+            updateDisplayAbove(o);
+            totalValue = null;
+        } else {
+            holdingArray.push(Number(displayValue));
+            holdingArray.push(o);
+            updateDisplayAbove(displayValue);
+            updateDisplayAbove(o);
+        }
+        displayValue = null;
+    }
+
+    function backSpace(){
+        if(displayValue.length > 1){
+            displayValue = displayValue.slice(0,-1);
+        } else {
+            displayValue = 0;
+        }
+        display.textContent = displayValue;
+    }
+
+    function logKey(e){
+        if(e.key === "Enter"){
+            e.preventDefault();
+            operate();
+        } else if(Number.isInteger(Number(e.key))){
+            displayNumber(e.key);
+        } else if(e.key === "+" || e.key === "-" || e.key === "*" || e.key === "/"){
+            setOperator(e.key);
+        } else if(e.key === "Backspace"){
+            backSpace();
+        }
+    }
+
+    function updateDisplayAbove(input){
+        displayAbove.textContent += input + " ";
+        displayAbove.textContent.trim();
     }
 
 </script>
